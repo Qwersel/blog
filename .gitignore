@@ -47,3 +47,18 @@ Thumbs.db
 # Replit
 .cache/
 .local/
+.replit
+.replitignore
+attached_assets/
+
+# Unrelated scaffolding (not part of this project)
+artifacts/mockup-sandbox/
+lib/api-client-react/
+lib/api-zod/
+scripts/
+
+# ML project files
+main.py
+ml_pipeline.ipynb
+pyproject.toml
+uv.lock
