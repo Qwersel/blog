@@ -1,6 +1,6 @@
-# [Project name]
+# CMS API
 
-_Replace the heading above with the project's name, and this line with one sentence describing what this app does for users._
+A Content Management System REST API with Authors and Articles, backed by PostgreSQL.
 
 ## Run & Operate
 
@@ -16,29 +16,80 @@ _Replace the heading above with the project's name, and this line with one sente
 - pnpm workspaces, Node.js 24, TypeScript 5.9
 - API: Express 5
 - DB: PostgreSQL + Drizzle ORM
-- Validation: Zod (`zod/v4`), `drizzle-zod`
-- API codegen: Orval (from OpenAPI spec)
-- Build: esbuild (CJS bundle)
+- Validation: Zod + `drizzle-zod`
+- Build: esbuild (ESM bundle)
 
 ## Where things live
 
-_Populate as you build — short repo map plus pointers to the source-of-truth file for DB schema, API contracts, theme files, etc._
+- `lib/db/src/schema/authors.ts` — Authors table, insert schema, types
+- `lib/db/src/schema/articles.ts` — Articles table (FK → authors), insert schema, types
+- `artifacts/api-server/src/routes/authors.ts` — Authors CRUD routes
+- `artifacts/api-server/src/routes/articles.ts` — Articles CRUD routes
 
 ## Architecture decisions
 
-_Populate as you build — non-obvious choices a reader couldn't infer from the code (3-5 bullets)._
+- All input validation uses Zod schemas derived from the Drizzle table definitions via `drizzle-zod`, keeping the schema as the single source of truth.
+- Author existence is checked before inserting or updating an article's `author_id`, returning 404 rather than letting the DB throw a FK violation.
+- PUT endpoints use `.partial()` on the insert schema so any subset of fields can be updated.
+- Route files import directly from `@workspace/db` — no separate service layer for this CRUD-only API.
 
 ## Product
 
-_Describe the high-level user-facing capabilities of this app once they exist._
+Full CRUD for **Authors** (`/api/authors`) and **Articles** (`/api/articles`) with a 1:N relationship. Data persists in PostgreSQL.
 
-## User preferences
+## API — curl examples
 
-_Populate as you build — explicit user instructions worth remembering across sessions._
+### Authors
+
+```bash
+# Create an author
+curl -X POST http://localhost:80/api/authors \
+  -H "Content-Type: application/json" \
+  -d '{"name":"Jane Smith","email":"jane@example.com","bio":"Tech writer"}'
+
+# List all authors
+curl http://localhost:80/api/authors
+
+# Get one author
+curl http://localhost:80/api/authors/1
+
+# Update an author (any subset of fields)
+curl -X PUT http://localhost:80/api/authors/1 \
+  -H "Content-Type: application/json" \
+  -d '{"bio":"Senior tech writer"}'
+
+# Delete an author
+curl -X DELETE http://localhost:80/api/authors/1
+```
+
+### Articles
+
+```bash
+# Create an article
+curl -X POST http://localhost:80/api/articles \
+  -H "Content-Type: application/json" \
+  -d '{"title":"Hello World","content":"My first post.","publishedDate":"2025-06-04","authorId":1}'
+
+# List all articles
+curl http://localhost:80/api/articles
+
+# Get one article
+curl http://localhost:80/api/articles/1
+
+# Update an article (any subset of fields)
+curl -X PUT http://localhost:80/api/articles/1 \
+  -H "Content-Type: application/json" \
+  -d '{"title":"Hello World — Updated"}'
+
+# Delete an article
+curl -X DELETE http://localhost:80/api/articles/1
+```
 
 ## Gotchas
 
-_Populate as you build — sharp edges, "always run X before Y" rules._
+- Always run `pnpm run typecheck:libs` after editing `lib/db/src/schema/` so downstream packages pick up the new declarations before running `pnpm --filter @workspace/api-server run typecheck`.
+- Run `pnpm --filter @workspace/db run push` after any schema change to apply it to the database.
+- Deleting an author while they still have articles will fail with a FK constraint error (cascading deletes are not configured — delete the articles first).
 
 ## Pointers
 
