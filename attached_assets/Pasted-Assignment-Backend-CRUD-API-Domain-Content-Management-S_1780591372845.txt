@@ -1,0 +1,38 @@
+Assignment - Backend CRUD API
+Domain: Content Management System (Blogging Platform)
+
+1. Objective
+Develop a RESTful API for a basic Content Management System (CMS) using Node.js. The main focus of this task is introductory backend development, simple database integration, and proper API routing design.
+2. Technology Stack
+•	Node.js: Core runtime framework.
+•	Express.js: Web routing server implementation.
+•	Database: MongoDB (Mongoose) OR MySQL / PostgreSQL (Sequelize/Prisma).
+•	Format: JSON payloads via standard REST architecture.
+3. Entities & Data Models
+Implement two simple models with an explicit 1:N (One-to-Many) connection link between an Author and their Articles:
+Author Entity
+•	id – Unique Identifier
+•	name – Author's display name string
+•	email – Unique registration email address string
+•	bio – Short biographical description text
+Article Entity
+•	id – Unique Identifier
+•	title – Headline/title string of the piece
+•	content – Body content text string
+•	published_date – Date object tracking timestamp
+•	author_id – Relationship key linking the record directly back to its individual Author
+4. Functional Requirements
+For both entities, implement standard structural CRUD endpoints:
+• CREATE (POST /api/authors) & (/api/articles) - Adds a record after validating fields.
+• READ ALL (GET /api/authors) & (/api/articles) - Pulls back full database collection array.
+• READ BY ID (GET /api/authors/:id) & (/api/articles/:id) - Returns targeted match or a 404 error.
+• UPDATE (PUT/PATCH /api/authors/:id) & (/api/articles/:id) - Saves changes dynamically.
+• DELETE (DELETE /api/authors/:id) & (/api/articles/:id) - Removes the entry from persistence.
+Additional Guidelines:
+•	HTTP Status Codes: Use proper semantic response codes (e.g., 200 OK, 201 Created, 400 Bad Request, 404 Not Found).
+•	Persistence: All objects must be written permanently to your chosen database. In-memory storage is not permitted.
+5. Setup & Deliverables
+•	Project Structure: Modular code layout containing separate files for routes, models, and controllers, utilizing a custom configuration file (.env).
+•	README: Comprehensive markdown guide detailing explicit 'npm install' and 'npm start' installation procedures, paired with cURL/Postman verification example templates.
+•	Submission format: An accessible public GitHub repository.
+•	Deadline: 06/5/2026.
